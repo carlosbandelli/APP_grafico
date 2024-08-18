@@ -1,25 +1,33 @@
 {
   "expo": {
-    "name": "pokegrafic",
-    "slug": "pokegrafic",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
-    "ios": {
-      "supportsTablet": true
-    },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#ffffff",
+        "foregroundImage": "./assets/adaptive-icon.png"
+      },
+      "package": "com.cbandelli.pokegrafic"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "9a91d4c6-9422-4fcc-ac31-fa1275ab9d96"
       }
     },
+    "icon": "./assets/icon.png",
+    "ios": {
+      "jsEngine": "jsc",
+      "supportsTablet": true
+    },
+    "jsEngine": "hermes",
+    "name": "pokegrafic",
+    "orientation": "portrait",
+    "slug": "pokegrafic",
+    "splash": {
+      "backgroundColor": "#ffffff",
+      "image": "./assets/splash.jpeg",
+      "resizeMode": "contain"
+    },
+    "userInterfaceStyle": "light",
+    "version": "1.0.0",
     "web": {
       "favicon": "./assets/favicon.png"
     }

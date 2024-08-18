@@ -1,0 +1,1 @@
+declare module '@lowkey/react-native-gif'

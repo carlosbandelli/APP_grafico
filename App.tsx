@@ -29,39 +29,67 @@ import {
   ToggleButton,
   ToggleButtonText,
 } from "./src/components";
+
+import { colors } from "./src/interface/colors";
+import { usePokemonTypeStore } from "./src/store/store";
+import TypeButton from "./src/components/typesbutton";
+
 export default function App() {
-  const [selectedType, setSelectedType] = useState<string | null>(null);
+  const {
+    selectedType,
+    setSelectedType,
+    pokemonTypes,
+    setPokemonTypes,
+    pieChartData,
+    setPieChartData,
+  } = usePokemonTypeStore();
+
   const [pokemonData, setPokemonData] = useState<Pokemon[]>([]);
-  const [pieChartData, setPieChartData] = useState<any[]>([]);
   const [pokemonStates, setPokemonStates] = useState<{
     [key: string]: boolean;
   }>({});
-  // const fetchPokemonData = async () => {
-  //   const data = await getPokemonData();
-  //   setPokemonData(data);
-  // };
+
+  const handleReset = () => {
+    setSelectedType(null);
+  };
 
   useEffect(() => {
     const fetchPokemonData = async () => {
       const data = await getPokemonData();
       setPokemonData(data);
 
-      const pieData = Array.from(
-        new Set(data.flatMap((pokemon: Pokemon) => pokemon.types))
-      ).map((type) => ({
-        name: type,
-        population: data.filter((pokemon: Pokemon) =>
-          pokemon.types.includes(type)
-        ).length,
-        color: `#${Math.floor(Math.random() * 16777215).toString(16)}`, // Cor aleatória
+      // Atualiza a store com os tipos de Pokémon e dados para o gráfico de pizza
+      const typeCounts = data.reduce((acc, pokemon) => {
+        pokemon.types.forEach((type) => {
+          if (acc[type]) {
+            acc[type].count += 1;
+          } else {
+            acc[type] = {
+              name: type,
+              color: colors[type as keyof typeof colors] || "#000000",
+              count: 1,
+            };
+          }
+        });
+        return acc;
+      }, {} as { [key: string]: { name: string; color: string; count: number } });
+
+      const typesArray = Object.values(typeCounts);
+      setPokemonTypes(typesArray);
+
+      const pieData = typesArray.map((type) => ({
+        name: type.name,
+        population: type.count,
+        color: type.color,
         legendFontColor: "#fff",
         legendFontSize: 15,
+        margin: 100,
       }));
       setPieChartData(pieData);
     };
 
     fetchPokemonData();
-  }, []);
+  }, [setPokemonTypes, setPieChartData]);
 
   // Filtrar Pokémon com base no tipo selecionado
   const filteredPokemon = selectedType
@@ -84,17 +112,17 @@ export default function App() {
     },
   };
 
-  const handlePieChartPress = (selectedItem: any) => {
-    const { name } = selectedItem;
-    setSelectedType(name === selectedType ? null : name); // Reset selectedType when the same segment is pressed again
-  };
-
   return (
     <StyledSafeAreaView>
       <StatusBar backgroundColor="transparent" translucent />
       <MainView>
         <MainText>Tipos de Pokémon da Primeira Geração</MainText>
         <ChartContainer>
+          <Text
+            style={{ textAlign: "center", fontSize: 16, fontWeight: "bold" }}
+          >
+            Total de Pokémon:{pokemonData.length}
+          </Text>
           <PieChart
             data={pieChartData}
             width={screenWidth - 30}
@@ -103,16 +131,29 @@ export default function App() {
             accessor={"population"}
             backgroundColor={"transparent"}
             paddingLeft={"15"}
-            center={[10, 20]}
+            center={[50, 5]}
             absolute
-            hasLegend
+            hasLegend={false}
             avoidFalseZero
           />
-          <Text>Total de Pokémon: {filteredPokemon.length}</Text>
         </ChartContainer>
         <MainContainer>
           <FlatList
-            style={{ marginTop: 20 }}
+            style={{ marginTop: 20, height: "30%" }}
+            data={pokemonTypes}
+            renderItem={({ item }) => (
+              <TypeButton
+                color={item.color}
+                typeName={item.name}
+                count={item.count}
+                onPress={() => setSelectedType(item.name)}
+              />
+            )}
+            keyExtractor={(item) => item.name}
+            horizontal
+          />
+          <FlatList
+            style={{ marginTop: 20, height: "100%" }}
             data={filteredPokemon}
             renderItem={({ item }: { item: Pokemon }) => {
               return (
@@ -154,6 +195,7 @@ export default function App() {
             horizontal
           />
         </MainContainer>
+        <Button title="Reset" onPress={() => handleReset()} />
       </MainView>
     </StyledSafeAreaView>
   );

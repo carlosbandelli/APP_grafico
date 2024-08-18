@@ -1,6 +1,6 @@
 import styled from 'styled-components/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { View, Text, TouchableOpacity, Image } from 'react-native';
+import { View, Text, TouchableOpacity, } from 'react-native';
 import { Pokemon } from '../utils';
 
 interface ToggleButtonProps {
@@ -30,7 +30,7 @@ export const MainContainer = styled(View)`
 `;
 
 export const ChartContainer = styled(View)`
-  flex: 1;
+  flex: 0.5;
   padding: 20px;
   background-color: #f0f0f0;
 `;
@@ -57,11 +57,8 @@ export const ButtonText = styled(Text)`
   font-size: 16px;
 `;
 
-// Estilo para o card
-// Estilo para o card
-// Estilo para o card
 export const Card = styled(View)`
-  background-color: #fff;
+  background-color: "transparent";
   border-radius: 10px;
   padding: 10px;
   margin-right: 10px;
